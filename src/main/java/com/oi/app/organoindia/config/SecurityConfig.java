@@ -1,9 +1,5 @@
 package com.oi.app.organoindia.config;
 
-import com.oi.app.organoindia.exception.AuthEntryPoint;
-import com.oi.app.organoindia.exception.CustomAccessDeniedHandler;
-import com.oi.app.organoindia.security.JwtFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,67 +15,83 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.oi.app.organoindia.exception.AuthEntryPoint;
+import com.oi.app.organoindia.exception.CustomAccessDeniedHandler;
+import com.oi.app.organoindia.security.JwtFilter;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity           // enables @PreAuthorize on service methods
+@EnableMethodSecurity // enables @PreAuthorize on service methods
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
-    private final AuthEntryPoint authEntryPoint;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
+        private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; "
+                        + "script-src 'self'; "
+                        + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        + "font-src 'self' https://fonts.gstatic.com; "
+                        + "img-src 'self' data: https:; "
+                        + "connect-src 'self'";
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)      // stateless JWT, no CSRF needed
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        private final JwtFilter jwtFilter;
+        private final AuthEntryPoint authEntryPoint;
+        private final CustomAccessDeniedHandler accessDeniedHandler;
 
-                .authorizeHttpRequests(auth -> auth
-                        // Public — auth endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(AbstractHttpConfigurer::disable) // stateless JWT, no CSRF needed
+                                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                        // Public — browsing the store
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                                .authorizeHttpRequests(auth -> auth
+                                                // Public — auth endpoints
+                                                .requestMatchers("/api/auth/**").permitAll()
 
-                        // Admin-only — product/category management
-                        .requestMatchers(HttpMethod.POST,   "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,    "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                                                // Public — browsing the store
+                                                .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico",
+                                                                "/vite.svg")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
-                        // Admin namespace
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                                // Admin-only — product/category management
+                                                .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+                                                .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
 
-                        // Anything else requires authentication (ADMIN or CUSTOMER)
-                        .anyRequest().authenticated()
-                )
+                                                // Admin namespace
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authEntryPoint)       // 401 as JSON
-                        .accessDeniedHandler(accessDeniedHandler)       // 403 as JSON
-                )
+                                                // Anything else to /api requires authentication (ADMIN or CUSTOMER)
+                                                .requestMatchers("/api/**").authenticated()
+                                                .anyRequest().permitAll())
 
-                .headers(h -> h
-                        .httpStrictTransportSecurity(hsts -> hsts
-                                .includeSubDomains(true)
-                                .maxAgeInSeconds(31536000))
-                        .frameOptions(frame -> frame.deny())
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
-                )
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint(authEntryPoint) // 401 as JSON
+                                                .accessDeniedHandler(accessDeniedHandler) // 403 as JSON
+                                )
 
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                                .headers(h -> h
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .includeSubDomains(true)
+                                                                .maxAgeInSeconds(31536000))
+                                                .frameOptions(frame -> frame.deny())
+                                                .contentSecurityPolicy(
+                                                                csp -> csp.policyDirectives(CONTENT_SECURITY_POLICY)))
 
-        return http.build();
-    }
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
+        }
 }

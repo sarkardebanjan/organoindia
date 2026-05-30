@@ -44,6 +44,27 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+def uiDir = layout.projectDirectory.dir("ui")
+
+tasks.register("npmCi", Exec) {
+    workingDir uiDir.asFile
+    commandLine "npm", "ci"
+}
+
+tasks.register("buildUi", Exec) {
+    dependsOn tasks.named("npmCi")
+    workingDir uiDir.asFile
+    commandLine "npm", "run", "build"
+}
+
+tasks.named("processResources") {
+    dependsOn tasks.named("buildUi")
+    from("${projectDir}/ui/dist") {
+        into "static"
+    }
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
