@@ -1,0 +1,16 @@
+# For a Spring Boot + React repo
+cat > .graphifyignore << 'EOF'
+node_modules/
+target/
+build/
+dist/
+.git/
+*.class
+*.jar
+*.war
+*.iml
+.idea/
+*.generated.java
+*.md
+*.html
+EOF

@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>organoindia — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>organoindia — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 308 nodes, 552 edges, 22 communities. Commit: e8ce677</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#extract-pipeline">Extraction Pipeline</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#community-3">Community 3</a>
+    <a href="#community-19">Community 19</a>
+    <a href="#community-20">Community 20</a>
+    <a href="#community-21">Community 21</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>133 nodes</small>")
+    class EXTRACT_PIPELINE_5F350230 module;
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>84 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>25 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>37 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    COMMUNITY_3_D8DFCEA7("Community 3<br/><small>26 nodes</small>")
+    class COMMUNITY_3_D8DFCEA7 module;
+    COMMUNITY_19_9462A0B9("Community 19<br/><small>1 nodes</small>")
+    class COMMUNITY_19_9462A0B9 module;
+    COMMUNITY_20_C86C0F59("Community 20<br/><small>1 nodes</small>")
+    class COMMUNITY_20_C86C0F59 module;
+    COMMUNITY_21_47BA4108("Community 21<br/><small>1 nodes</small>")
+    class COMMUNITY_21_47BA4108 module;
+    SERVE_API_35EC8E86 -->|imports x10| BUILD_GRAPH_321CBB04
+    COMMUNITY_3_D8DFCEA7 -->|imports x9| BUILD_GRAPH_321CBB04
+    SERVE_API_35EC8E86 -->|imports x8| COMMUNITY_3_D8DFCEA7
+    CLI_SKILLS_9964CBB8 -->|imports x7| SERVE_API_35EC8E86
+    BUILD_GRAPH_321CBB04 -->|imports x6| SERVE_API_35EC8E86
+    BUILD_GRAPH_321CBB04 -->|imports x6| COMMUNITY_3_D8DFCEA7
+    CLI_SKILLS_9964CBB8 -->|contains x4| COMMUNITY_3_D8DFCEA7
+    COMMUNITY_3_D8DFCEA7 -->|imports x4| SERVE_API_35EC8E86
+    CLI_SKILLS_9964CBB8 -->|contains x3| BUILD_GRAPH_321CBB04
+    SERVE_API_35EC8E86 -->|imports x2| EXTRACT_PIPELINE_5F350230
+    COMMUNITY_3_D8DFCEA7 -->|imports x2| CLI_SKILLS_9964CBB8
+    EXTRACT_PIPELINE_5F350230 -->|imports x2| BUILD_GRAPH_321CBB04
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Extraction Pipeline</td><td>133</td><td><code>5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18</code></td></tr><tr><td>Graph Build</td><td>84</td><td><code>0, 2, 12, 16</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>25</td><td><code>4</code></td></tr><tr><td>Serving API</td><td>37</td><td><code>1</code></td></tr><tr><td>Community 3</td><td>26</td><td><code>3</code></td></tr><tr><td>Community 19</td><td>1</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>1</td><td><code>20</code></td></tr><tr><td>Community 21</td><td>1</td><td><code>21</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Community 19 -&gt; Extraction Pipeline -&gt; Graph Build -&gt; Serving API -&gt; Community 3 -&gt; CLI &amp; Skill Installers -&gt; Community 20</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>308 nodes · 552 edges · 22 communities (20 shown, 2 thin omitted)</li>
+      <li>Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 22 edges (avg confidence: 0.8)</li>
+      <li>Token cost: 0 input · 0 output</li>
+      <li>1. `useAuthStore` - 18 edges</li>
+      <li>2. `Checkout` - 14 edges</li>
+      <li>3. `formatCurrency()` - 14 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Extraction Pipeline ====== -->
+<h2 id="extract-pipeline">2. Extraction Pipeline</h2>
+<p>Extraction Pipeline groups implementation around com, app, organoindia, exception, mostly in organoindia/exception/GlobalExceptionHandler.java, organoindia/security/JwtUtil.java, organoindia/service/AuthService.java. This section covers 133 nodes and 237 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Extraction Pipeline (133 nodes, 237 edges)
+    subgraph extract_pipeline_organoindia_config_SecurityConf_2feb31b3["organoindia/config/SecurityConfig.java"]
+        config_securityconfig_3a56c3f6("SecurityConfig.java")
+        config_securityconfig_securityconfig_a2b2ebac("SecurityConfig<br/><small>organoindia/config/SecurityConfig.java</small>")
+        authenticationmanager_468321ed("AuthenticationManager<br/><small>organoindia/config/SecurityConfig.java</small>")
+        config_securityconfig_securityconfig_filterchain_bb5ba421("filterChain()<br/><small>organoindia/config/SecurityConfig.java</small>")
+        passwordencoder_31827974("PasswordEncoder<br/><small>organoindia/config/SecurityConfig.java</small>")
+    end
+    subgraph extract_pipeline_organoindia_controller_AuthCont_0f833972["organoindia/controller/AuthController.java"]
+        controller_authcontroller_3341f34a("AuthController.java")
+        controller_authcontroller_authcontroller_login_44d61e2b("login()<br/><small>organoindia/controller/AuthController.java</small>")
+        controller_authcontroller_authcontroller_logout_64ca7b62("logout()<br/><small>organoindia/controller/AuthController.java</small>")
+    end
+    subgraph extract_pipeline_app_organoindia_OrganoindiaAppl_d64cd6f0["app/organoindia/OrganoindiaApplication.java"]
+        organoindia_organoindiaapplication_673f598c("OrganoindiaApplication.java")
+        organoindia_organoindiaapplication_organoindiaap_4b8f151e("main()<br/><small>app/organoindia/OrganoindiaApplication.java</small>")
+    end
+    subgraph extract_pipeline_organoindia_config_DataInitiali_ca4cf6cb["organoindia/config/DataInitializer.java"]
+        config_datainitializer_0d4885b6("DataInitializer.java")
+        config_datainitializer_datainitializer_run_e321a4e4("run()<br/><small>organoindia/config/DataInitializer.java</small>")
+    end
+    auth_register_36b131fc("Register.jsx")
+    test_a94a8fe5("Test<br/><small>organoindia/config/DataInitializerTest.java</small>")
+    exception_authentrypoint_51e8e3cd("AuthEntryPoint.java")
+    exception_customaccessdeniedhandler_1e13fab8("CustomAccessDeniedHandler.java")
+    exception_globalexceptionhandler_43ac2298("GlobalExceptionHandler.java")
+    repository_refreshtokenrepository_07c08160("RefreshTokenRepository.java")
+    organoindia_organoindiaapplication_673f598c -->|method| organoindia_organoindiaapplication_organoindiaap_4b8f151e
+    config_datainitializer_0d4885b6 -->|method| config_datainitializer_datainitializer_run_e321a4e4
+    config_datainitializer_0d4885b6 -->|method| test_a94a8fe5
+    config_securityconfig_securityconfig_a2b2ebac -->|method| authenticationmanager_468321ed
+    config_securityconfig_securityconfig_a2b2ebac -->|method| config_securityconfig_securityconfig_filterchain_bb5ba421
+    config_securityconfig_securityconfig_a2b2ebac -->|method| passwordencoder_31827974
+    controller_authcontroller_3341f34a -->|method| auth_register_36b131fc
+    controller_authcontroller_3341f34a -->|method| controller_authcontroller_authcontroller_login_44d61e2b
+    controller_authcontroller_3341f34a -->|method| controller_authcontroller_authcontroller_logout_64ca7b62
+    config_datainitializer_0d4885b6 -->|imports| passwordencoder_31827974
+    config_securityconfig_3a56c3f6 -->|imports| authenticationmanager_468321ed
+    config_securityconfig_3a56c3f6 -->|imports| passwordencoder_31827974
+    %% Omitted for readability: 115 nodes, 0 edges
+    class config_securityconfig_3a56c3f6 klass;
+    class config_securityconfig_securityconfig_a2b2ebac klass;
+    class authenticationmanager_468321ed klass;
+    class config_securityconfig_securityconfig_filterchain_bb5ba421 function;
+    class passwordencoder_31827974 klass;
+    class controller_authcontroller_3341f34a klass;
+    class controller_authcontroller_authcontroller_login_44d61e2b function;
+    class controller_authcontroller_authcontroller_logout_64ca7b62 function;
+    class organoindia_organoindiaapplication_673f598c klass;
+    class organoindia_organoindiaapplication_organoindiaap_4b8f151e function;
+    class config_datainitializer_0d4885b6 klass;
+    class config_datainitializer_datainitializer_run_e321a4e4 function;
+    class auth_register_36b131fc ui;
+    class test_a94a8fe5 test;
+    class exception_authentrypoint_51e8e3cd klass;
+    class exception_customaccessdeniedhandler_1e13fab8 klass;
+    class exception_globalexceptionhandler_43ac2298 klass;
+    class repository_refreshtokenrepository_07c08160 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AuthenticationConfiguration</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>AuthenticationManager</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>Bean</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br>+3 more</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>SecurityConfig</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AuthenticationManager</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>filterChain()</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>PasswordEncoder</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>.filterChain()</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>SecurityConfig</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><code>AccessDeniedHandler</code><br><code>AuthenticationEntryPoint</code></td>
+  <td>.filterChain() node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>HttpSecurity</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>HttpSecurity node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>SecurityFilterChain</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>SecurityFilterChain node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Bean</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>Bean node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>PasswordEncoder</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>DataInitializer.java</code><br><small style="color:var(--muted)">organoindia/config/DataInitializer.java</small><br><code>SecurityConfig</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><code>AuthService.java</code><br><small style="color:var(--muted)">organoindia/service/AuthService.java</small></td>
+  <td>PasswordEncoder node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>AuthenticationConfiguration</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>AuthenticationManager</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>SecurityConfig</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small><br><code>SecurityConfig.java</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td><code>AuthService.java</code><br><small style="color:var(--muted)">organoindia/service/AuthService.java</small></td>
+  <td>AuthenticationManager node in organoindia/config/SecurityConfig.java.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AuthenticationEntryPoint</code><br><code>AuthenticationException</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small><br><code>commence()</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small><br>+3 more</td>
+  <td>AuthEntryPoint.java node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>AuthenticationEntryPoint</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small><br><code>filterChain()</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>AuthenticationEntryPoint node in project.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.commence()</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>.commence() node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>HttpServletRequest</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>HttpServletRequest node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>HttpServletResponse</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>HttpServletResponse node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>AuthenticationException</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>AuthEntryPoint.java</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>AuthenticationException node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Override</code><br><small style="color:var(--muted)">organoindia/exception/AuthEntryPoint.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Override node in organoindia/exception/AuthEntryPoint.java.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AccessDeniedException</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small><br><code>AccessDeniedHandler</code><br><code>handle()</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small><br>+3 more</td>
+  <td>CustomAccessDeniedHandler.java node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>AccessDeniedHandler</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small><br><code>filterChain()</code><br><small style="color:var(--muted)">organoindia/config/SecurityConfig.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>AccessDeniedHandler node in project.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>.handle()</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>.handle() node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>HttpServletRequest</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>HttpServletRequest node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>HttpServletResponse</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>HttpServletResponse node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>AccessDeniedException</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>CustomAccessDeniedHandler.java</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>AccessDeniedException node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Override</code><br><small style="color:var(--muted)">organoindia/exception/CustomAccessDeniedHandler.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Override node in organoindia/exception/CustomAccessDeniedHandler.java.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>UserRepository.java</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Optional</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small><br><code>User</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td>UserRepository.java node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>UserRepository</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>existsByEmail()</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small><br><code>findByEmail()</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td>UserRepository node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>.findByEmail()</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>UserRepository</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><code>create()</code><br><small style="color:var(--muted)">organoindia/service/RefreshTokenService.java</small><br><code>loadUserByUsername()</code><br><small style="color:var(--muted)">organoindia/security/CustomUserDetailsService.java</small></td>
+  <td>.findByEmail() node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>String</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>String node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Optional</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>UserRepository.java</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>Optional node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>User</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>UserRepository.java</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td>No direct outbound edge</td>
+  <td>User node in organoindia/repository/UserRepository.java.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>.existsByEmail()</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">organoindia/config/DataInitializer.java</small><br><code>UserRepository</code><br><small style="color:var(--muted)">organoindia/repository/UserRepository.java</small></td>
+  <td><code>register()</code><br><small style="color:var(--muted)">organoindia/service/AuthService.java</small></td>
+  <td>.existsByEmail() node in organoindia/repository/UserRepository.java.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>organoindia/exception/GlobalExceptionHandler.java</code></td><td>16 nodes</td></tr>
+<tr><td><code>organoindia/security/JwtUtil.java</code></td><td>12 nodes</td></tr>
+<tr><td><code>organoindia/service/AuthService.java</code></td><td>10 nodes</td></tr>
+<tr><td><code>organoindia/config/SecurityConfig.java</code></td><td>9 nodes</td></tr>
+<tr><td><code>organoindia/repository/RefreshTokenRepository.java</code></td><td>8 nodes</td></tr>
+<tr><td><code>organoindia/controller/AuthController.java</code></td><td>7 nodes</td></tr>
+<tr><td><code>organoindia/repository/UserRepository.java</code></td><td>7 nodes</td></tr>
+<tr><td><code>organoindia/security/JwtFilter.java</code></td><td>7 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x104, imports x58, method x38, contains x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Graph Build ====== -->
+<h2 id="build-graph">3. Graph Build</h2>
+<p>Graph Build groups implementation around packagejson, features, react, settingsjson, mostly in ui/package.json, .vscode/settings.json, src/utils/constants.js. This section covers 84 nodes and 103 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (84 nodes, 103 edges)
+    subgraph build_graph_src_utils_constants_js_2a175e39["src/utils/constants.js"]
+        utils_constants_9d738ea0("constants.js")
+        utils_constants_categories_6902690b("CATEGORIES<br/><small>src/utils/constants.js</small>")
+        utils_constants_cities_f9f620c0("CITIES<br/><small>src/utils/constants.js</small>")
+        utils_constants_delivery_slots_aa2ce419("DELIVERY_SLOTS<br/><small>src/utils/constants.js</small>")
+        utils_constants_payment_methods_70e20dd6("PAYMENT_METHODS<br/><small>src/utils/constants.js</small>")
+    end
+    subgraph build_graph_src_api_usersApi_js_f8b098b5["src/api/usersApi.js"]
+        api_usersapi_ad3e34fa("usersApi.js")
+        api_usersapi_usersapi_1dd92238("usersApi<br/><small>src/api/usersApi.js</small>")
+    end
+    subgraph build_graph_src_pages_Home_jsx_abf6f08f["src/pages/Home.jsx"]
+        pages_home_a7460776("Home.jsx")
+        pages_home_home_e7bc00a9("Home()<br/><small>src/pages/Home.jsx</small>")
+    end
+    subgraph build_graph_ui_src_App_jsx_beec6c3e["ui/src/App.jsx"]
+        src_app_checkout_b8f24ed7("Checkout<br/><small>ui/src/App.jsx</small>")
+        src_app_productlisting_78e852f9("ProductListing<br/><small>ui/src/App.jsx</small>")
+    end
+    layout_footer_835a6c99("Footer.jsx")
+    product_productskeleton_8b7d0036("ProductSkeleton.jsx")
+    admin_adminproducts_63383eae("AdminProducts.jsx")
+    admin_adminusers_26b61321("AdminUsers.jsx")
+    products_productlisting_productlisting_cdb17ed6("ProductListing()<br/><small>features/products/ProductListing.jsx</small>")
+    hooks_usedebounce_773613d3("useDebounce.js")
+    store_uistore_useuistore_a558917a("useUiStore<br/><small>src/store/uiStore.js</small>")
+    products_productlisting_productlisting_cdb17ed6 -->|calls| hooks_usedebounce_773613d3
+    pages_home_home_e7bc00a9 -->|calls| store_uistore_useuistore_a558917a
+    src_app_productlisting_78e852f9 -->|imports| hooks_usedebounce_773613d3
+    src_app_productlisting_78e852f9 -->|imports| product_productskeleton_8b7d0036
+    src_app_productlisting_78e852f9 -->|imports| utils_constants_9d738ea0
+    src_app_productlisting_78e852f9 -->|imports| utils_constants_categories_6902690b
+    src_app_productlisting_78e852f9 -->|imports| utils_constants_cities_f9f620c0
+    src_app_checkout_b8f24ed7 -->|imports| api_usersapi_ad3e34fa
+    src_app_checkout_b8f24ed7 -->|imports| api_usersapi_usersapi_1dd92238
+    src_app_checkout_b8f24ed7 -->|imports| utils_constants_9d738ea0
+    src_app_checkout_b8f24ed7 -->|imports| utils_constants_delivery_slots_aa2ce419
+    src_app_checkout_b8f24ed7 -->|imports| utils_constants_payment_methods_70e20dd6
+    api_usersapi_ad3e34fa -->|imports| admin_adminusers_26b61321
+    api_usersapi_usersapi_1dd92238 -->|imports| admin_adminusers_26b61321
+    layout_footer_835a6c99 -->|imports| utils_constants_9d738ea0
+    layout_footer_835a6c99 -->|imports| utils_constants_categories_6902690b
+    layout_footer_835a6c99 -->|imports| utils_constants_cities_f9f620c0
+    product_productskeleton_8b7d0036 -->|imports| pages_home_a7460776
+    admin_adminproducts_63383eae -->|imports| utils_constants_9d738ea0
+    admin_adminproducts_63383eae -->|imports| utils_constants_categories_6902690b
+    pages_home_a7460776 -->|imports| store_uistore_useuistore_a558917a
+    pages_home_a7460776 -->|imports| utils_constants_9d738ea0
+    pages_home_a7460776 -->|imports| utils_constants_categories_6902690b
+    pages_home_a7460776 -->|imports| utils_constants_cities_f9f620c0
+    %% Omitted for readability: 66 nodes, 0 edges
+    class utils_constants_9d738ea0 module;
+    class utils_constants_categories_6902690b klass;
+    class utils_constants_cities_f9f620c0 klass;
+    class utils_constants_delivery_slots_aa2ce419 klass;
+    class utils_constants_payment_methods_70e20dd6 klass;
+    class api_usersapi_ad3e34fa api;
+    class api_usersapi_usersapi_1dd92238 api;
+    class pages_home_a7460776 ui;
+    class pages_home_home_e7bc00a9 ui;
+    class src_app_checkout_b8f24ed7 ui;
+    class src_app_productlisting_78e852f9 ui;
+    class layout_footer_835a6c99 ui;
+    class product_productskeleton_8b7d0036 ui;
+    class admin_adminproducts_63383eae ui;
+    class admin_adminusers_26b61321 ui;
+    class products_productlisting_productlisting_cdb17ed6 ui;
+    class hooks_usedebounce_773613d3 ui;
+    class store_uistore_useuistore_a558917a ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ProductListing</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CATEGORIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>CITIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br>+2 more</td>
+  <td>ProductListing node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Checkout</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>DELIVERY_SLOTS</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>PAYMENT_METHODS</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br>+2 more</td>
+  <td>Checkout node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>usersApi.js</code><br><small style="color:var(--muted)">src/api/usersApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>Checkout</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><code>Addresses.jsx</code><br><small style="color:var(--muted)">features/profile/Addresses.jsx</small><br><code>AdminUsers.jsx</code><br><small style="color:var(--muted)">features/admin/AdminUsers.jsx</small><br><code>Profile.jsx</code><br><small style="color:var(--muted)">features/profile/Profile.jsx</small></td>
+  <td>usersApi.js node in src/api/usersApi.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>usersApi</code><br><small style="color:var(--muted)">src/api/usersApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>Checkout</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><code>Addresses.jsx</code><br><small style="color:var(--muted)">features/profile/Addresses.jsx</small><br><code>AdminUsers.jsx</code><br><small style="color:var(--muted)">features/admin/AdminUsers.jsx</small><br><code>Profile.jsx</code><br><small style="color:var(--muted)">features/profile/Profile.jsx</small></td>
+  <td>usersApi node in src/api/usersApi.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Footer.jsx</code><br><small style="color:var(--muted)">components/layout/Footer.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CATEGORIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>CITIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small></td>
+  <td>Footer.jsx node in components/layout/Footer.jsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Footer()</code><br><small style="color:var(--muted)">components/layout/Footer.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Footer() node in components/layout/Footer.jsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>OrderTimeline.jsx</code><br><small style="color:var(--muted)">components/order/OrderTimeline.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>ORDER_STATUSES</code><br><small style="color:var(--muted)">src/utils/constants.js</small></td>
+  <td>OrderTimeline.jsx node in components/order/OrderTimeline.jsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>ProductSkeleton.jsx</code><br><small style="color:var(--muted)">components/product/ProductSkeleton.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ProductListing</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><code>Home.jsx</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small></td>
+  <td>ProductSkeleton.jsx node in components/product/ProductSkeleton.jsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>AdminProducts.jsx</code><br><small style="color:var(--muted)">features/admin/AdminProducts.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CATEGORIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>PRODUCT_UNITS</code><br><small style="color:var(--muted)">src/utils/constants.js</small></td>
+  <td>AdminProducts.jsx node in features/admin/AdminProducts.jsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>emptyProduct</code><br><small style="color:var(--muted)">features/admin/AdminProducts.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>emptyProduct node in features/admin/AdminProducts.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>AdminProducts()</code><br><small style="color:var(--muted)">features/admin/AdminProducts.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AdminProducts() node in features/admin/AdminProducts.jsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>AdminUsers.jsx</code><br><small style="color:var(--muted)">features/admin/AdminUsers.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>usersApi</code><br><small style="color:var(--muted)">src/api/usersApi.js</small><br><code>usersApi.js</code><br><small style="color:var(--muted)">src/api/usersApi.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>AdminUsers.jsx node in features/admin/AdminUsers.jsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>AdminUsers()</code><br><small style="color:var(--muted)">features/admin/AdminUsers.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AdminUsers() node in features/admin/AdminUsers.jsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>addressSchema</code><br><small style="color:var(--muted)">features/checkout/Checkout.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>addressSchema node in features/checkout/Checkout.jsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>steps</code><br><small style="color:var(--muted)">features/checkout/Checkout.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>steps node in features/checkout/Checkout.jsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Checkout()</code><br><small style="color:var(--muted)">features/checkout/Checkout.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Checkout() node in features/checkout/Checkout.jsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>defaultFilters</code><br><small style="color:var(--muted)">features/products/ProductListing.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>defaultFilters node in features/products/ProductListing.jsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Filters()</code><br><small style="color:var(--muted)">features/products/ProductListing.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Filters() node in features/products/ProductListing.jsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>ProductListing()</code><br><small style="color:var(--muted)">features/products/ProductListing.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useDebounce.js</code><br><small style="color:var(--muted)">src/hooks/useDebounce.js</small></td>
+  <td>ProductListing() node in features/products/ProductListing.jsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Addresses.jsx</code><br><small style="color:var(--muted)">features/profile/Addresses.jsx</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td><code>usersApi</code><br><small style="color:var(--muted)">src/api/usersApi.js</small><br><code>usersApi.js</code><br><small style="color:var(--muted)">src/api/usersApi.js</small></td>
+  <td><code>CITIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small></td>
+  <td>Addresses.jsx node in features/profile/Addresses.jsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>schema</code><br><small style="color:var(--muted)">features/profile/Addresses.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>schema node in features/profile/Addresses.jsx.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Addresses()</code><br><small style="color:var(--muted)">features/profile/Addresses.jsx</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Addresses() node in features/profile/Addresses.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Profile.jsx</code><br><small style="color:var(--muted)">features/profile/Profile.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>usersApi</code><br><small style="color:var(--muted)">src/api/usersApi.js</small><br><code>usersApi.js</code><br><small style="color:var(--muted)">src/api/usersApi.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>Profile.jsx node in features/profile/Profile.jsx.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>schema</code><br><small style="color:var(--muted)">features/profile/Profile.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>schema node in features/profile/Profile.jsx.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Profile()</code><br><small style="color:var(--muted)">features/profile/Profile.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Profile() node in features/profile/Profile.jsx.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>useDebounce.js</code><br><small style="color:var(--muted)">src/hooks/useDebounce.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ProductListing</code><br><small style="color:var(--muted)">ui/src/App.jsx</small><br><code>ProductListing()</code><br><small style="color:var(--muted)">features/products/ProductListing.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>useDebounce.js node in src/hooks/useDebounce.js.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Home.jsx</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ProductSkeleton.jsx</code><br><small style="color:var(--muted)">components/product/ProductSkeleton.jsx</small></td>
+  <td><code>CATEGORIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>CITIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br>+2 more</td>
+  <td>Home.jsx node in src/pages/Home.jsx.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Home()</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useUiStore</code><br><small style="color:var(--muted)">src/store/uiStore.js</small></td>
+  <td>Home() node in src/pages/Home.jsx.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>uiStore.js</code><br><small style="color:var(--muted)">src/store/uiStore.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>Home.jsx</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small></td>
+  <td><code>CITIES</code><br><small style="color:var(--muted)">src/utils/constants.js</small><br><code>constants.js</code><br><small style="color:var(--muted)">src/utils/constants.js</small></td>
+  <td>uiStore.js node in src/store/uiStore.js.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>useUiStore</code><br><small style="color:var(--muted)">src/store/uiStore.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>Home()</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small><br><code>Home.jsx</code><br><small style="color:var(--muted)">src/pages/Home.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>useUiStore node in src/store/uiStore.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>ui/package.json</code></td><td>37 nodes</td></tr>
+<tr><td><code>.vscode/settings.json</code></td><td>9 nodes</td></tr>
+<tr><td><code>src/utils/constants.js</code></td><td>7 nodes</td></tr>
+<tr><td><code>features/admin/AdminProducts.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>features/checkout/Checkout.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>features/products/ProductListing.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>features/profile/Addresses.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>features/profile/Profile.jsx</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x67, imports x18, imports x16, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around appjsx, emptystatejsx, pages, assets, mostly in ui/src/App.jsx, assets/illustrations/EmptyState.jsx, src/pages/NotFound.jsx. This section covers 25 nodes and 24 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (25 nodes, 24 edges)
+    subgraph cli_skills_ui_src_App_jsx_610d1c22["ui/src/App.jsx"]
+        src_app_46efd68e("App.jsx")
+        src_app_addresses_221724ff("Addresses<br/><small>ui/src/App.jsx</small>")
+        src_app_adminusers_b27cea47("AdminUsers<br/><small>ui/src/App.jsx</small>")
+        src_app_app_f316b20d("App()<br/><small>ui/src/App.jsx</small>")
+        src_app_authbootstrap_4ea1d9fe("AuthBootstrap()<br/><small>ui/src/App.jsx</small>")
+        src_app_cartpage_7e6a27d3("CartPage<br/><small>ui/src/App.jsx</small>")
+        src_app_home_2fcca8ab("Home<br/><small>ui/src/App.jsx</small>")
+        src_app_login_a49ba606("Login<br/><small>ui/src/App.jsx</small>")
+    end
+    subgraph cli_skills_assets_illustrations_EmptyState_jsx_96739c6a["assets/illustrations/EmptyState.jsx"]
+        illustrations_emptystate_fae7490e("EmptyState.jsx")
+        illustrations_emptystate_emptystate_5cda3ddf("EmptyState()<br/><small>assets/illustrations/EmptyState.jsx</small>")
+        illustrations_emptystate_colors_62b17d27("colors<br/><small>assets/illustrations/EmptyState.jsx</small>")
+    end
+    subgraph cli_skills_src_pages_NotFound_jsx_d56648db["src/pages/NotFound.jsx"]
+        pages_notfound_f48bdfc3("NotFound.jsx")
+        pages_notfound_notfound_0efd4f93("NotFound()<br/><small>src/pages/NotFound.jsx</small>")
+    end
+    subgraph cli_skills_src_pages_Unauthorized_jsx_049c868a["src/pages/Unauthorized.jsx"]
+        pages_unauthorized_dd096d60("Unauthorized.jsx")
+        pages_unauthorized_unauthorized_4f6e9529("Unauthorized()<br/><small>src/pages/Unauthorized.jsx</small>")
+    end
+    subgraph cli_skills_src_theme_index_js_71db6574["src/theme/index.js"]
+        theme_index_d973231f("index.js")
+        theme_index_basetheme_876578ab("baseTheme<br/><small>src/theme/index.js</small>")
+    end
+    src_main_3231ff52("main.jsx")
+    src_app_46efd68e -->|imports| theme_index_d973231f
+    src_app_46efd68e -->|imports| src_main_3231ff52
+    illustrations_emptystate_fae7490e -->|imports| pages_notfound_f48bdfc3
+    illustrations_emptystate_fae7490e -->|imports| pages_unauthorized_dd096d60
+    %% Omitted for readability: 7 nodes, 0 edges
+    class src_app_46efd68e ui;
+    class src_app_addresses_221724ff async;
+    class src_app_adminusers_b27cea47 ui;
+    class src_app_app_f316b20d ui;
+    class src_app_authbootstrap_4ea1d9fe ui;
+    class src_app_cartpage_7e6a27d3 ui;
+    class src_app_home_2fcca8ab ui;
+    class src_app_login_a49ba606 ui;
+    class illustrations_emptystate_fae7490e ui;
+    class illustrations_emptystate_emptystate_5cda3ddf ui;
+    class illustrations_emptystate_colors_62b17d27 ui;
+    class pages_notfound_f48bdfc3 ui;
+    class pages_notfound_notfound_0efd4f93 ui;
+    class pages_unauthorized_dd096d60 ui;
+    class pages_unauthorized_unauthorized_4f6e9529 ui;
+    class theme_index_d973231f module;
+    class theme_index_basetheme_876578ab function;
+    class src_main_3231ff52 ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>index.js</code><br><small style="color:var(--muted)">src/theme/index.js</small><br><code>main.jsx</code><br><small style="color:var(--muted)">ui/src/main.jsx</small></td>
+  <td>App.jsx node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Home</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Home node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Login</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Login node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Register</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Register node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>CartPage</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>OrdersList</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>OrdersList node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Profile</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Profile node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Addresses</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Addresses node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>AdminUsers</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AdminUsers node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Unauthorized</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Unauthorized node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>queryClient</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>queryClient node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>RouteFallback()</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>RouteFallback() node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>AuthBootstrap()</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AuthBootstrap() node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>router</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>router node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>App()</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>App() node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>EmptyState.jsx</code><br><small style="color:var(--muted)">assets/illustrations/EmptyState.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>NotFound.jsx</code><br><small style="color:var(--muted)">src/pages/NotFound.jsx</small><br><code>Unauthorized.jsx</code><br><small style="color:var(--muted)">src/pages/Unauthorized.jsx</small></td>
+  <td>EmptyState.jsx node in assets/illustrations/EmptyState.jsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>colors</code><br><small style="color:var(--muted)">assets/illustrations/EmptyState.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>colors node in assets/illustrations/EmptyState.jsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>EmptyState()</code><br><small style="color:var(--muted)">assets/illustrations/EmptyState.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>EmptyState() node in assets/illustrations/EmptyState.jsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">ui/src/main.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>main.jsx node in ui/src/main.jsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>NotFound.jsx</code><br><small style="color:var(--muted)">src/pages/NotFound.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>EmptyState.jsx</code><br><small style="color:var(--muted)">assets/illustrations/EmptyState.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>NotFound.jsx node in src/pages/NotFound.jsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>NotFound()</code><br><small style="color:var(--muted)">src/pages/NotFound.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>NotFound() node in src/pages/NotFound.jsx.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Unauthorized.jsx</code><br><small style="color:var(--muted)">src/pages/Unauthorized.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>EmptyState.jsx</code><br><small style="color:var(--muted)">assets/illustrations/EmptyState.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Unauthorized.jsx node in src/pages/Unauthorized.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Unauthorized()</code><br><small style="color:var(--muted)">src/pages/Unauthorized.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Unauthorized() node in src/pages/Unauthorized.jsx.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>index.js</code><br><small style="color:var(--muted)">src/theme/index.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>index.js node in src/theme/index.js.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>baseTheme</code><br><small style="color:var(--muted)">src/theme/index.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>baseTheme node in src/theme/index.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>ui/src/App.jsx</code></td><td>15 nodes</td></tr>
+<tr><td><code>assets/illustrations/EmptyState.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/pages/NotFound.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/pages/Unauthorized.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/theme/index.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>ui/src/main.jsx</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x20, imports x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Serving API ====== -->
+<h2 id="serve-api">5. Serving API</h2>
+<p>Serving API groups implementation around api, components, layout, features, mostly in src/utils/jwtUtils.js, src/api/axiosInstance.js, features/auth/Login.jsx. This section covers 37 nodes and 79 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (37 nodes, 79 edges)
+    subgraph serve_api_src_utils_jwtUtils_js_5e6efbae["src/utils/jwtUtils.js"]
+        utils_jwtutils_decodejwt_fd53e9c9("decodeJwt()<br/><small>src/utils/jwtUtils.js</small>")
+        utils_jwtutils_extractroles_3e58696c("extractRoles()<br/><small>src/utils/jwtUtils.js</small>")
+        utils_jwtutils_hasadminrole_90a2184a("hasAdminRole()<br/><small>src/utils/jwtUtils.js</small>")
+    end
+    subgraph serve_api_components_layout_Header_jsx_fec8d21c["components/layout/Header.jsx"]
+        layout_header_1d2d255b("Header.jsx")
+        layout_header_header_62a760bb("Header()<br/><small>components/layout/Header.jsx</small>")
+    end
+    subgraph serve_api_components_product_ProductCard_jsx_bb11c193["components/product/ProductCard.jsx"]
+        product_productcard_f1874cd8("ProductCard.jsx")
+        product_productcard_productcard_0f31afcf("ProductCard()<br/><small>components/product/ProductCard.jsx</small>")
+    end
+    subgraph serve_api_features_auth_AdminRoute_jsx_1ec571fd["features/auth/AdminRoute.jsx"]
+        auth_adminroute_01800b6d("AdminRoute.jsx")
+        auth_adminroute_adminroute_aa3e8e7d("AdminRoute()<br/><small>features/auth/AdminRoute.jsx</small>")
+    end
+    subgraph serve_api_src_store_authStore_js_bf6a4f58["src/store/authStore.js"]
+        store_authstore_useauthstore_4a03c2d9("useAuthStore<br/><small>src/store/authStore.js</small>")
+        store_authstore_userfromtoken_ac38573d("userFromToken()<br/><small>src/store/authStore.js</small>")
+    end
+    layout_bottomnav_07051be9("BottomNav.jsx")
+    auth_login_login_ea1fd08e("Login()<br/><small>features/auth/Login.jsx</small>")
+    products_productdetail_productdetail_dc2dce04("ProductDetail()<br/><small>features/products/ProductDetail.jsx</small>")
+    api_axiosinstance_ed4c15b5("axiosInstance.js")
+    hooks_useauth_useauth_353a3673("useAuth()<br/><small>src/hooks/useAuth.js</small>")
+    hooks_usecart_usecart_e39554f1("useCart()<br/><small>src/hooks/useCart.js</small>")
+    src_app_productdetail_b83406e0("ProductDetail<br/><small>ui/src/App.jsx</small>")
+    layout_header_header_62a760bb -->|calls| hooks_useauth_useauth_353a3673
+    layout_header_header_62a760bb -->|calls| hooks_usecart_usecart_e39554f1
+    layout_header_header_62a760bb -->|calls| store_authstore_useauthstore_4a03c2d9
+    product_productcard_productcard_0f31afcf -->|calls| hooks_usecart_usecart_e39554f1
+    product_productcard_productcard_0f31afcf -->|calls| store_authstore_useauthstore_4a03c2d9
+    auth_adminroute_adminroute_aa3e8e7d -->|calls| store_authstore_useauthstore_4a03c2d9
+    auth_login_login_ea1fd08e -->|calls| hooks_useauth_useauth_353a3673
+    products_productdetail_productdetail_dc2dce04 -->|calls| hooks_usecart_usecart_e39554f1
+    products_productdetail_productdetail_dc2dce04 -->|calls| store_authstore_useauthstore_4a03c2d9
+    hooks_useauth_useauth_353a3673 -->|calls| store_authstore_useauthstore_4a03c2d9
+    hooks_usecart_usecart_e39554f1 -->|calls| store_authstore_useauthstore_4a03c2d9
+    store_authstore_userfromtoken_ac38573d -->|calls| utils_jwtutils_decodejwt_fd53e9c9
+    store_authstore_userfromtoken_ac38573d -->|calls| utils_jwtutils_extractroles_3e58696c
+    utils_jwtutils_decodejwt_fd53e9c9 -->|calls| utils_jwtutils_extractroles_3e58696c
+    utils_jwtutils_extractroles_3e58696c -->|calls| utils_jwtutils_hasadminrole_90a2184a
+    src_app_productdetail_b83406e0 -->|imports| hooks_usecart_usecart_e39554f1
+    src_app_productdetail_b83406e0 -->|imports| store_authstore_useauthstore_4a03c2d9
+    api_axiosinstance_ed4c15b5 -->|imports| store_authstore_useauthstore_4a03c2d9
+    layout_bottomnav_07051be9 -->|imports| store_authstore_useauthstore_4a03c2d9
+    layout_header_1d2d255b -->|imports| hooks_useauth_useauth_353a3673
+    layout_header_1d2d255b -->|imports| hooks_usecart_usecart_e39554f1
+    layout_header_1d2d255b -->|imports| store_authstore_useauthstore_4a03c2d9
+    product_productcard_f1874cd8 -->|imports| hooks_usecart_usecart_e39554f1
+    product_productcard_f1874cd8 -->|imports| store_authstore_useauthstore_4a03c2d9
+    %% Omitted for readability: 19 nodes, 1 edges
+    class utils_jwtutils_decodejwt_fd53e9c9 function;
+    class utils_jwtutils_extractroles_3e58696c function;
+    class utils_jwtutils_hasadminrole_90a2184a function;
+    class layout_header_1d2d255b ui;
+    class layout_header_header_62a760bb ui;
+    class product_productcard_f1874cd8 ui;
+    class product_productcard_productcard_0f31afcf ui;
+    class auth_adminroute_01800b6d api;
+    class auth_adminroute_adminroute_aa3e8e7d api;
+    class store_authstore_useauthstore_4a03c2d9 ui;
+    class store_authstore_userfromtoken_ac38573d function;
+    class layout_bottomnav_07051be9 ui;
+    class auth_login_login_ea1fd08e ui;
+    class products_productdetail_productdetail_dc2dce04 ui;
+    class api_axiosinstance_ed4c15b5 module;
+    class hooks_useauth_useauth_353a3673 ui;
+    class hooks_usecart_usecart_e39554f1 ui;
+    class src_app_productdetail_b83406e0 ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ProductDetail</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>ProductGrid.jsx</code><br><small style="color:var(--muted)">components/product/ProductGrid.jsx</small><br><code>productsApi.js</code><br><small style="color:var(--muted)">src/api/productsApi.js</small><br>+3 more</td>
+  <td>ProductDetail node in ui/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>authApi.js</code><br><small style="color:var(--muted)">src/api/authApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>axiosInstance.js</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small><br><code>useAuth.js</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td>authApi.js node in src/api/authApi.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>authApi</code><br><small style="color:var(--muted)">src/api/authApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuth.js</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td>authApi node in src/api/authApi.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>axiosInstance.js</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>authApi.js</code><br><small style="color:var(--muted)">src/api/authApi.js</small></td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>cartApi.js</code><br><small style="color:var(--muted)">src/api/cartApi.js</small><br><code>productsApi.js</code><br><small style="color:var(--muted)">src/api/productsApi.js</small><br>+1 more</td>
+  <td>axiosInstance.js node in src/api/axiosInstance.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>api</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>api node in src/api/axiosInstance.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>refreshAccessToken()</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>refreshAccessToken() node in src/api/axiosInstance.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>cartApi.js</code><br><small style="color:var(--muted)">src/api/cartApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>axiosInstance.js</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small></td>
+  <td><code>useCart.js</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td>cartApi.js node in src/api/cartApi.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>cartApi</code><br><small style="color:var(--muted)">src/api/cartApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useCart.js</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td>cartApi node in src/api/cartApi.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>productsApi.js</code><br><small style="color:var(--muted)">src/api/productsApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>axiosInstance.js</code><br><small style="color:var(--muted)">src/api/axiosInstance.js</small><br><code>ProductDetail</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>productsApi.js node in src/api/productsApi.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>BottomNav.jsx</code><br><small style="color:var(--muted)">components/layout/BottomNav.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>Layout.jsx</code><br><small style="color:var(--muted)">components/layout/Layout.jsx</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>BottomNav.jsx node in components/layout/BottomNav.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>navItems</code><br><small style="color:var(--muted)">components/layout/BottomNav.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>navItems node in components/layout/BottomNav.jsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>Layout.jsx</code><br><small style="color:var(--muted)">components/layout/Layout.jsx</small><br><code>useAuth()</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small><br>+4 more</td>
+  <td>Header.jsx node in components/layout/Header.jsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Header()</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuth()</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useCart()</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td>Header() node in components/layout/Header.jsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Layout.jsx</code><br><small style="color:var(--muted)">components/layout/Layout.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>BottomNav.jsx</code><br><small style="color:var(--muted)">components/layout/BottomNav.jsx</small><br><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Layout.jsx node in components/layout/Layout.jsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Layout()</code><br><small style="color:var(--muted)">components/layout/Layout.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Layout() node in components/layout/Layout.jsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>ProductCard.jsx</code><br><small style="color:var(--muted)">components/product/ProductCard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>ProductGrid.jsx</code><br><small style="color:var(--muted)">components/product/ProductGrid.jsx</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br>+2 more</td>
+  <td>ProductCard.jsx node in components/product/ProductCard.jsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>ProductCard()</code><br><small style="color:var(--muted)">components/product/ProductCard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useCart()</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td>ProductCard() node in components/product/ProductCard.jsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>ProductGrid.jsx</code><br><small style="color:var(--muted)">components/product/ProductGrid.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ProductCard.jsx</code><br><small style="color:var(--muted)">components/product/ProductCard.jsx</small><br><code>ProductDetail</code><br><small style="color:var(--muted)">ui/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>ProductGrid.jsx node in components/product/ProductGrid.jsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>AdminRoute.jsx</code><br><small style="color:var(--muted)">features/auth/AdminRoute.jsx</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>PrivateRoute.jsx</code><br><small style="color:var(--muted)">features/auth/PrivateRoute.jsx</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>AdminRoute.jsx node in features/auth/AdminRoute.jsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>AdminRoute()</code><br><small style="color:var(--muted)">features/auth/AdminRoute.jsx</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>AdminRoute() node in features/auth/AdminRoute.jsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Login.jsx</code><br><small style="color:var(--muted)">features/auth/Login.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuth()</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small><br><code>useAuth.js</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td>Login.jsx node in features/auth/Login.jsx.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>schema</code><br><small style="color:var(--muted)">features/auth/Login.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>schema node in features/auth/Login.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Login()</code><br><small style="color:var(--muted)">features/auth/Login.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuth()</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td>Login() node in features/auth/Login.jsx.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>PrivateRoute.jsx</code><br><small style="color:var(--muted)">features/auth/PrivateRoute.jsx</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>AdminRoute.jsx</code><br><small style="color:var(--muted)">features/auth/AdminRoute.jsx</small></td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>PrivateRoute.jsx node in features/auth/PrivateRoute.jsx.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>ProductDetail()</code><br><small style="color:var(--muted)">features/products/ProductDetail.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useCart()</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td>ProductDetail() node in features/products/ProductDetail.jsx.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>useAuth.js</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>authApi</code><br><small style="color:var(--muted)">src/api/authApi.js</small><br><code>authApi.js</code><br><small style="color:var(--muted)">src/api/authApi.js</small><br><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br>+1 more</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>useAuth.js node in src/hooks/useAuth.js.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>useAuth()</code><br><small style="color:var(--muted)">src/hooks/useAuth.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>Header()</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br><code>Login()</code><br><small style="color:var(--muted)">features/auth/Login.jsx</small><br>+1 more</td>
+  <td><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>useAuth() node in src/hooks/useAuth.js.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>useCart.js</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>cartApi</code><br><small style="color:var(--muted)">src/api/cartApi.js</small><br><code>cartApi.js</code><br><small style="color:var(--muted)">src/api/cartApi.js</small><br><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br>+2 more</td>
+  <td><code>authStore.js</code><br><small style="color:var(--muted)">src/store/authStore.js</small><br><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>useCart.js node in src/hooks/useCart.js.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>cartQueryKey</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>cartQueryKey node in src/hooks/useCart.js.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>useCart()</code><br><small style="color:var(--muted)">src/hooks/useCart.js</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>Header()</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br><code>Header.jsx</code><br><small style="color:var(--muted)">components/layout/Header.jsx</small><br><code>ProductCard()</code><br><small style="color:var(--muted)">components/product/ProductCard.jsx</small><br>+3 more</td>
+  <td><code>useAuthStore</code><br><small style="color:var(--muted)">src/store/authStore.js</small></td>
+  <td>useCart() node in src/hooks/useCart.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/utils/jwtUtils.js</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/api/axiosInstance.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>features/auth/Login.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/hooks/useCart.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/store/authStore.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/api/authApi.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/api/cartApi.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/layout/BottomNav.jsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x26, contains x20, imports x18, calls x15. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Community 3 ====== -->
+<h2 id="community-3">6. Community 3</h2>
+<p>Community 3 groups implementation around components, features, cart, order, mostly in src/utils/formatters.js, components/order/StatusChip.jsx, components/cart/CartSummary.jsx. This section covers 26 nodes and 45 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 3 (26 nodes, 45 edges)
+    subgraph community_3_src_utils_formatters_js_019f9ef7["src/utils/formatters.js"]
+        utils_formatters_formatcurrency_ad01ae04("formatCurrency()<br/><small>src/utils/formatters.js</small>")
+        utils_formatters_formatdate_79443605("formatDate()<br/><small>src/utils/formatters.js</small>")
+        utils_formatters_cd48c2ea("formatters.js")
+    end
+    subgraph community_3_components_cart_CartSummary_jsx_aecd39bf["components/cart/CartSummary.jsx"]
+        cart_cartsummary_ae122403("CartSummary.jsx")
+        cart_cartsummary_cartsummary_a34b8700("CartSummary()<br/><small>components/cart/CartSummary.jsx</small>")
+    end
+    subgraph community_3_components_order_OrderCard_jsx_9955db4e["components/order/OrderCard.jsx"]
+        order_ordercard_f14bd80d("OrderCard.jsx")
+        order_ordercard_ordercard_28d2fe39("OrderCard()<br/><small>components/order/OrderCard.jsx</small>")
+    end
+    subgraph community_3_features_admin_AdminDashboard_jsx_bd095d99["features/admin/AdminDashboard.jsx"]
+        admin_admindashboard_admindashboard_bf5cc6dd("AdminDashboard()<br/><small>features/admin/AdminDashboard.jsx</small>")
+        admin_admindashboard_3afbfc99("AdminDashboard.jsx")
+    end
+    subgraph community_3_features_orders_OrderDetail_jsx_5d65161d["features/orders/OrderDetail.jsx"]
+        orders_orderdetail_orderdetail_cf4d1279("OrderDetail()<br/><small>features/orders/OrderDetail.jsx</small>")
+        orders_orderdetail_753aeae2("OrderDetail.jsx")
+    end
+    cart_cartitem_d8b6d60e("CartItem.jsx")
+    common_emptypanel_6b8fe3f4("EmptyPanel.jsx")
+    layout_pagewrapper_50fbe02c("PageWrapper.jsx")
+    admin_adminorders_1d8e4749("AdminOrders.jsx")
+    cart_cartpage_7c39f4ce("CartPage.jsx")
+    orders_orderslist_ea80eef1("OrdersList.jsx")
+    api_ordersapi_07e619ae("ordersApi.js")
+    cart_cartsummary_cartsummary_a34b8700 -->|calls| utils_formatters_formatcurrency_ad01ae04
+    order_ordercard_ordercard_28d2fe39 -->|calls| utils_formatters_formatcurrency_ad01ae04
+    order_ordercard_ordercard_28d2fe39 -->|calls| utils_formatters_formatdate_79443605
+    admin_admindashboard_admindashboard_bf5cc6dd -->|calls| utils_formatters_formatcurrency_ad01ae04
+    orders_orderdetail_orderdetail_cf4d1279 -->|calls| utils_formatters_formatcurrency_ad01ae04
+    api_ordersapi_07e619ae -->|imports| admin_admindashboard_3afbfc99
+    api_ordersapi_07e619ae -->|imports| admin_adminorders_1d8e4749
+    api_ordersapi_07e619ae -->|imports| orders_orderdetail_753aeae2
+    api_ordersapi_07e619ae -->|imports| orders_orderslist_ea80eef1
+    cart_cartitem_d8b6d60e -->|imports| utils_formatters_cd48c2ea
+    cart_cartitem_d8b6d60e -->|imports| utils_formatters_formatcurrency_ad01ae04
+    cart_cartitem_d8b6d60e -->|imports| cart_cartpage_7c39f4ce
+    cart_cartsummary_ae122403 -->|imports| cart_cartpage_7c39f4ce
+    cart_cartsummary_ae122403 -->|imports| utils_formatters_cd48c2ea
+    cart_cartsummary_ae122403 -->|imports| utils_formatters_formatcurrency_ad01ae04
+    common_emptypanel_6b8fe3f4 -->|imports| cart_cartpage_7c39f4ce
+    common_emptypanel_6b8fe3f4 -->|imports| orders_orderslist_ea80eef1
+    layout_pagewrapper_50fbe02c -->|imports| admin_admindashboard_3afbfc99
+    layout_pagewrapper_50fbe02c -->|imports| admin_adminorders_1d8e4749
+    layout_pagewrapper_50fbe02c -->|imports| cart_cartpage_7c39f4ce
+    layout_pagewrapper_50fbe02c -->|imports| orders_orderdetail_753aeae2
+    layout_pagewrapper_50fbe02c -->|imports| orders_orderslist_ea80eef1
+    order_ordercard_f14bd80d -->|imports| utils_formatters_cd48c2ea
+    order_ordercard_f14bd80d -->|imports| utils_formatters_formatcurrency_ad01ae04
+    %% Omitted for readability: 8 nodes, 6 edges
+    class utils_formatters_formatcurrency_ad01ae04 function;
+    class utils_formatters_formatdate_79443605 function;
+    class utils_formatters_cd48c2ea module;
+    class cart_cartsummary_ae122403 ui;
+    class cart_cartsummary_cartsummary_a34b8700 ui;
+    class order_ordercard_f14bd80d ui;
+    class order_ordercard_ordercard_28d2fe39 ui;
+    class admin_admindashboard_admindashboard_bf5cc6dd ui;
+    class admin_admindashboard_3afbfc99 ui;
+    class orders_orderdetail_orderdetail_cf4d1279 ui;
+    class orders_orderdetail_753aeae2 ui;
+    class cart_cartitem_d8b6d60e ui;
+    class common_emptypanel_6b8fe3f4 ui;
+    class layout_pagewrapper_50fbe02c ui;
+    class admin_adminorders_1d8e4749 ui;
+    class cart_cartpage_7c39f4ce ui;
+    class orders_orderslist_ea80eef1 ui;
+    class api_ordersapi_07e619ae api;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ordersApi.js</code><br><small style="color:var(--muted)">src/api/ordersApi.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AdminDashboard.jsx</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small><br><code>AdminOrders.jsx</code><br><small style="color:var(--muted)">features/admin/AdminOrders.jsx</small><br><code>OrderDetail.jsx</code><br><small style="color:var(--muted)">features/orders/OrderDetail.jsx</small><br>+1 more</td>
+  <td>ordersApi.js node in src/api/ordersApi.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CartItem.jsx</code><br><small style="color:var(--muted)">components/cart/CartItem.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CartPage.jsx</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small><br><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>CartItem.jsx node in components/cart/CartItem.jsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>CartSummary.jsx</code><br><small style="color:var(--muted)">components/cart/CartSummary.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CartPage.jsx</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small><br><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>CartSummary.jsx node in components/cart/CartSummary.jsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>CartSummary()</code><br><small style="color:var(--muted)">components/cart/CartSummary.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>CartSummary() node in components/cart/CartSummary.jsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>EmptyPanel.jsx</code><br><small style="color:var(--muted)">components/common/EmptyPanel.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>CartPage.jsx</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small><br><code>OrdersList.jsx</code><br><small style="color:var(--muted)">features/orders/OrdersList.jsx</small></td>
+  <td>EmptyPanel.jsx node in components/common/EmptyPanel.jsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>PageWrapper.jsx</code><br><small style="color:var(--muted)">components/layout/PageWrapper.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AdminDashboard.jsx</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small><br><code>AdminOrders.jsx</code><br><small style="color:var(--muted)">features/admin/AdminOrders.jsx</small><br><code>CartPage.jsx</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small><br>+2 more</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>PageWrapper()</code><br><small style="color:var(--muted)">components/layout/PageWrapper.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>OrderCard.jsx</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatDate()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br>+2 more</td>
+  <td>OrderCard.jsx node in components/order/OrderCard.jsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>OrderCard()</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatDate()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>OrderCard() node in components/order/OrderCard.jsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>StatusChip.jsx</code><br><small style="color:var(--muted)">components/order/StatusChip.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>OrderCard.jsx</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small></td>
+  <td><code>OrderDetail.jsx</code><br><small style="color:var(--muted)">features/orders/OrderDetail.jsx</small></td>
+  <td>StatusChip.jsx node in components/order/StatusChip.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>colors</code><br><small style="color:var(--muted)">components/order/StatusChip.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>colors node in components/order/StatusChip.jsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>StatusChip()</code><br><small style="color:var(--muted)">components/order/StatusChip.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>StatusChip() node in components/order/StatusChip.jsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>AdminDashboard.jsx</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ordersApi.js</code><br><small style="color:var(--muted)">src/api/ordersApi.js</small><br><code>PageWrapper.jsx</code><br><small style="color:var(--muted)">components/layout/PageWrapper.jsx</small></td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>AdminDashboard.jsx node in features/admin/AdminDashboard.jsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>AdminDashboard()</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>AdminDashboard() node in features/admin/AdminDashboard.jsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>AdminOrders.jsx</code><br><small style="color:var(--muted)">features/admin/AdminOrders.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ordersApi.js</code><br><small style="color:var(--muted)">src/api/ordersApi.js</small><br><code>PageWrapper.jsx</code><br><small style="color:var(--muted)">components/layout/PageWrapper.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>AdminOrders.jsx node in features/admin/AdminOrders.jsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>AdminOrders()</code><br><small style="color:var(--muted)">features/admin/AdminOrders.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AdminOrders() node in features/admin/AdminOrders.jsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>CartPage.jsx</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>CartItem.jsx</code><br><small style="color:var(--muted)">components/cart/CartItem.jsx</small><br><code>CartSummary.jsx</code><br><small style="color:var(--muted)">components/cart/CartSummary.jsx</small><br><code>EmptyPanel.jsx</code><br><small style="color:var(--muted)">components/common/EmptyPanel.jsx</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>CartPage()</code><br><small style="color:var(--muted)">features/cart/CartPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>OrderDetail.jsx</code><br><small style="color:var(--muted)">features/orders/OrderDetail.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ordersApi.js</code><br><small style="color:var(--muted)">src/api/ordersApi.js</small><br><code>PageWrapper.jsx</code><br><small style="color:var(--muted)">components/layout/PageWrapper.jsx</small><br><code>StatusChip.jsx</code><br><small style="color:var(--muted)">components/order/StatusChip.jsx</small></td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small><br><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>OrderDetail.jsx node in features/orders/OrderDetail.jsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>OrderDetail()</code><br><small style="color:var(--muted)">features/orders/OrderDetail.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td>OrderDetail() node in features/orders/OrderDetail.jsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>OrdersList.jsx</code><br><small style="color:var(--muted)">features/orders/OrdersList.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>EmptyPanel.jsx</code><br><small style="color:var(--muted)">components/common/EmptyPanel.jsx</small><br><code>OrderCard.jsx</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small><br><code>ordersApi.js</code><br><small style="color:var(--muted)">src/api/ordersApi.js</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>OrdersList.jsx node in features/orders/OrdersList.jsx.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>OrdersList()</code><br><small style="color:var(--muted)">features/orders/OrdersList.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>OrdersList() node in features/orders/OrdersList.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>formatters.js</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>AdminDashboard.jsx</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small><br><code>CartItem.jsx</code><br><small style="color:var(--muted)">components/cart/CartItem.jsx</small><br><code>CartSummary.jsx</code><br><small style="color:var(--muted)">components/cart/CartSummary.jsx</small><br>+2 more</td>
+  <td>No direct outbound edge</td>
+  <td>formatters.js node in src/utils/formatters.js.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>formatCurrency()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>AdminDashboard()</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small><br><code>AdminDashboard.jsx</code><br><small style="color:var(--muted)">features/admin/AdminDashboard.jsx</small><br><code>CartItem.jsx</code><br><small style="color:var(--muted)">components/cart/CartItem.jsx</small><br>+6 more</td>
+  <td>No direct outbound edge</td>
+  <td>formatCurrency() node in src/utils/formatters.js.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>formatDate()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>OrderCard()</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small><br><code>OrderCard.jsx</code><br><small style="color:var(--muted)">components/order/OrderCard.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>formatDate() node in src/utils/formatters.js.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>formatWeight()</code><br><small style="color:var(--muted)">src/utils/formatters.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>formatWeight() node in src/utils/formatters.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/utils/formatters.js</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/order/StatusChip.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/cart/CartSummary.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/layout/PageWrapper.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/order/OrderCard.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>features/admin/AdminDashboard.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>features/admin/AdminOrders.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>features/cart/CartPage.jsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x21, contains x13, imports x6, calls x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. Community 19 ====== -->
+<h2 id="community-19">7. Community 19</h2>
+<p>Community 19 groups implementation around settingsgradle, mostly in settings.gradle. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 19 (1 nodes, 0 edges)
+    settings_3cc1d5a4("settings.gradle")
+    class settings_3cc1d5a4 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>settings.gradle</code><br><small style="color:var(--muted)">settings.gradle</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>settings.gradle node in settings.gradle.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>settings.gradle</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Community 20 ====== -->
+<h2 id="community-20">8. Community 20</h2>
+<p>Community 20 groups implementation around eslintconfigjs, mostly in ui/eslint.config.js. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 20 (1 nodes, 0 edges)
+    ui_eslint_config_5c324d29("eslint.config.js")
+    class ui_eslint_config_5c324d29 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>eslint.config.js</code><br><small style="color:var(--muted)">ui/eslint.config.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>ui/eslint.config.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Community 21 ====== -->
+<h2 id="community-21">9. Community 21</h2>
+<p>Community 21 groups implementation around viteconfigjs, mostly in ui/vite.config.js. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 21 (1 nodes, 0 edges)
+    ui_vite_config_ab95ebb0("vite.config.js")
+    class ui_vite_config_ab95ebb0 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>vite.config.js</code><br><small style="color:var(--muted)">ui/vite.config.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>ui/vite.config.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>308</td></tr>
+      <tr><td>Edges</td><td>552</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>22</td></tr>
+      <tr><td>Documented Sections</td><td>8</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>530</td></tr>
+      <tr><td>INFERRED</td><td>22</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>organoindia — Architecture Documentation</p>
+  <p>Generated: 2026-06-08 11:41 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>

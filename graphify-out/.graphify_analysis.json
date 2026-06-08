@@ -1,0 +1,493 @@
+{
+  "communities": {
+    "0": [
+      "admin_adminproducts",
+      "admin_adminproducts_adminproducts",
+      "admin_adminproducts_emptyproduct",
+      "admin_adminusers",
+      "admin_adminusers_adminusers",
+      "api_usersapi",
+      "api_usersapi_usersapi",
+      "checkout_checkout_addressschema",
+      "checkout_checkout_checkout",
+      "checkout_checkout_steps",
+      "hooks_usedebounce",
+      "layout_footer",
+      "layout_footer_footer",
+      "order_ordertimeline",
+      "pages_home",
+      "pages_home_home",
+      "product_productskeleton",
+      "products_productlisting_defaultfilters",
+      "products_productlisting_filters",
+      "products_productlisting_productlisting",
+      "profile_addresses",
+      "profile_addresses_addresses",
+      "profile_addresses_schema",
+      "profile_profile",
+      "profile_profile_profile",
+      "profile_profile_schema",
+      "src_app_checkout",
+      "src_app_productlisting",
+      "store_uistore",
+      "store_uistore_useuistore",
+      "utils_constants",
+      "utils_constants_categories",
+      "utils_constants_cities",
+      "utils_constants_delivery_slots",
+      "utils_constants_order_statuses",
+      "utils_constants_payment_methods",
+      "utils_constants_product_units"
+    ],
+    "1": [
+      "api_authapi",
+      "api_authapi_authapi",
+      "api_axiosinstance",
+      "api_axiosinstance_api",
+      "api_axiosinstance_refreshaccesstoken",
+      "api_cartapi",
+      "api_cartapi_cartapi",
+      "api_productsapi",
+      "auth_adminroute",
+      "auth_adminroute_adminroute",
+      "auth_login",
+      "auth_login_login",
+      "auth_login_schema",
+      "auth_privateroute",
+      "hooks_useauth",
+      "hooks_useauth_useauth",
+      "hooks_usecart",
+      "hooks_usecart_cartquerykey",
+      "hooks_usecart_usecart",
+      "layout_bottomnav",
+      "layout_bottomnav_navitems",
+      "layout_header",
+      "layout_header_header",
+      "layout_layout",
+      "layout_layout_layout",
+      "product_productcard",
+      "product_productcard_productcard",
+      "product_productgrid",
+      "products_productdetail_productdetail",
+      "src_app_productdetail",
+      "store_authstore",
+      "store_authstore_useauthstore",
+      "store_authstore_userfromtoken",
+      "utils_jwtutils",
+      "utils_jwtutils_decodejwt",
+      "utils_jwtutils_extractroles",
+      "utils_jwtutils_hasadminrole"
+    ],
+    "2": [
+      "ui_package",
+      "ui_package_dependencies",
+      "ui_package_dependencies_axios",
+      "ui_package_dependencies_date_fns",
+      "ui_package_dependencies_emotion_react",
+      "ui_package_dependencies_emotion_styled",
+      "ui_package_dependencies_eslint",
+      "ui_package_dependencies_eslint_js",
+      "ui_package_dependencies_eslint_plugin_react_hooks",
+      "ui_package_dependencies_eslint_plugin_react_refresh",
+      "ui_package_dependencies_framer_motion",
+      "ui_package_dependencies_globals",
+      "ui_package_dependencies_hookform_resolvers",
+      "ui_package_dependencies_mui_icons_material",
+      "ui_package_dependencies_mui_material",
+      "ui_package_dependencies_mui_x_data_grid",
+      "ui_package_dependencies_notistack",
+      "ui_package_dependencies_react",
+      "ui_package_dependencies_react_dom",
+      "ui_package_dependencies_react_hook_form",
+      "ui_package_dependencies_react_icons",
+      "ui_package_dependencies_react_router_dom",
+      "ui_package_dependencies_recharts",
+      "ui_package_dependencies_tanstack_react_query",
+      "ui_package_dependencies_vite",
+      "ui_package_dependencies_vitejs_plugin_react",
+      "ui_package_dependencies_zod",
+      "ui_package_dependencies_zustand",
+      "ui_package_name",
+      "ui_package_private",
+      "ui_package_scripts",
+      "ui_package_scripts_build",
+      "ui_package_scripts_dev",
+      "ui_package_scripts_lint",
+      "ui_package_scripts_preview",
+      "ui_package_type",
+      "ui_package_version"
+    ],
+    "3": [
+      "admin_admindashboard",
+      "admin_admindashboard_admindashboard",
+      "admin_adminorders",
+      "admin_adminorders_adminorders",
+      "api_ordersapi",
+      "cart_cartitem",
+      "cart_cartpage",
+      "cart_cartpage_cartpage",
+      "cart_cartsummary",
+      "cart_cartsummary_cartsummary",
+      "common_emptypanel",
+      "layout_pagewrapper",
+      "layout_pagewrapper_pagewrapper",
+      "order_ordercard",
+      "order_ordercard_ordercard",
+      "order_statuschip",
+      "order_statuschip_colors",
+      "order_statuschip_statuschip",
+      "orders_orderdetail",
+      "orders_orderdetail_orderdetail",
+      "orders_orderslist",
+      "orders_orderslist_orderslist",
+      "utils_formatters",
+      "utils_formatters_formatcurrency",
+      "utils_formatters_formatdate",
+      "utils_formatters_formatweight"
+    ],
+    "4": [
+      "illustrations_emptystate",
+      "illustrations_emptystate_colors",
+      "illustrations_emptystate_emptystate",
+      "pages_notfound",
+      "pages_notfound_notfound",
+      "pages_unauthorized",
+      "pages_unauthorized_unauthorized",
+      "src_app",
+      "src_app_addresses",
+      "src_app_adminusers",
+      "src_app_app",
+      "src_app_authbootstrap",
+      "src_app_cartpage",
+      "src_app_home",
+      "src_app_login",
+      "src_app_orderslist",
+      "src_app_profile",
+      "src_app_queryclient",
+      "src_app_register",
+      "src_app_routefallback",
+      "src_app_router",
+      "src_app_unauthorized",
+      "src_main",
+      "theme_index",
+      "theme_index_basetheme"
+    ],
+    "5": [
+      "accessdeniedexception",
+      "accessdeniedhandler",
+      "authenticationconfiguration",
+      "authenticationentrypoint",
+      "authenticationexception",
+      "authenticationmanager",
+      "bean",
+      "config_securityconfig",
+      "config_securityconfig_securityconfig",
+      "config_securityconfig_securityconfig_filterchain",
+      "exception_authentrypoint",
+      "exception_authentrypoint_authentrypoint_commence",
+      "exception_customaccessdeniedhandler",
+      "exception_customaccessdeniedhandler_customaccessdeniedhandler_handle",
+      "httpsecurity",
+      "passwordencoder",
+      "securityfilterchain",
+      "src_main_java_com_oi_app_organoindia_exception_authentrypoint_java_httpservletrequest",
+      "src_main_java_com_oi_app_organoindia_exception_authentrypoint_java_httpservletresponse",
+      "src_main_java_com_oi_app_organoindia_exception_authentrypoint_java_override",
+      "src_main_java_com_oi_app_organoindia_exception_customaccessdeniedhandler_java_httpservletrequest",
+      "src_main_java_com_oi_app_organoindia_exception_customaccessdeniedhandler_java_httpservletresponse",
+      "src_main_java_com_oi_app_organoindia_exception_customaccessdeniedhandler_java_override"
+    ],
+    "6": [
+      "repository_userrepository",
+      "repository_userrepository_userrepository",
+      "repository_userrepository_userrepository_existsbyemail",
+      "repository_userrepository_userrepository_findbyemail",
+      "security_customuserdetailsservice",
+      "security_customuserdetailsservice_customuserdetailsservice_loaduserbyusername",
+      "service_authservice",
+      "service_authservice_authservice",
+      "service_authservice_authservice_login",
+      "service_authservice_authservice_logout",
+      "service_authservice_authservice_refresh",
+      "service_authservice_authservice_register",
+      "src_main_java_com_oi_app_organoindia_repository_userrepository_java_optional",
+      "src_main_java_com_oi_app_organoindia_repository_userrepository_java_string",
+      "src_main_java_com_oi_app_organoindia_repository_userrepository_java_user",
+      "src_main_java_com_oi_app_organoindia_security_customuserdetailsservice_java_override",
+      "src_main_java_com_oi_app_organoindia_security_customuserdetailsservice_java_string",
+      "src_main_java_com_oi_app_organoindia_security_customuserdetailsservice_java_userdetails",
+      "src_main_java_com_oi_app_organoindia_service_authservice_java_authresponse",
+      "src_main_java_com_oi_app_organoindia_service_authservice_java_loginrequest",
+      "src_main_java_com_oi_app_organoindia_service_authservice_java_refreshrequest",
+      "src_main_java_com_oi_app_organoindia_service_authservice_java_registerrequest",
+      "userdetailsservice"
+    ],
+    "7": [
+      "filterchain",
+      "grantedauthority",
+      "list",
+      "onceperrequestfilter",
+      "secretkey",
+      "security_jwtfilter",
+      "security_jwtfilter_jwtfilter",
+      "security_jwtfilter_jwtfilter_dofilterinternal",
+      "security_jwtutil",
+      "security_jwtutil_jwtutil",
+      "security_jwtutil_jwtutil_extractroles",
+      "security_jwtutil_jwtutil_extractusername",
+      "security_jwtutil_jwtutil_generate",
+      "security_jwtutil_jwtutil_isvalid",
+      "security_jwtutil_jwtutil_key",
+      "src_main_java_com_oi_app_organoindia_security_jwtfilter_java_httpservletrequest",
+      "src_main_java_com_oi_app_organoindia_security_jwtfilter_java_httpservletresponse",
+      "src_main_java_com_oi_app_organoindia_security_jwtfilter_java_override",
+      "src_main_java_com_oi_app_organoindia_security_jwtutil_java_string",
+      "src_main_java_com_oi_app_organoindia_security_jwtutil_java_userdetails"
+    ],
+    "8": [
+      "model_refreshtoken",
+      "model_refreshtoken_refreshtoken_isexpired",
+      "repository_refreshtokenrepository",
+      "repository_refreshtokenrepository_refreshtokenrepository_deletebytoken",
+      "repository_refreshtokenrepository_refreshtokenrepository_deletebyuser",
+      "repository_refreshtokenrepository_refreshtokenrepository_findbytoken",
+      "service_refreshtokenservice",
+      "service_refreshtokenservice_refreshtokenservice_create",
+      "service_refreshtokenservice_refreshtokenservice_deletebytoken",
+      "service_refreshtokenservice_refreshtokenservice_validate",
+      "src_main_java_com_oi_app_organoindia_repository_refreshtokenrepository_java_optional",
+      "src_main_java_com_oi_app_organoindia_repository_refreshtokenrepository_java_refreshtoken",
+      "src_main_java_com_oi_app_organoindia_repository_refreshtokenrepository_java_string",
+      "src_main_java_com_oi_app_organoindia_repository_refreshtokenrepository_java_user",
+      "src_main_java_com_oi_app_organoindia_service_refreshtokenservice_java_refreshtoken",
+      "src_main_java_com_oi_app_organoindia_service_refreshtokenservice_java_string",
+      "transactional"
+    ],
+    "9": [
+      "badcredentialsexception",
+      "disabledexception",
+      "exception_globalexceptionhandler",
+      "exception_globalexceptionhandler_globalexceptionhandler_handlebadcredentials",
+      "exception_globalexceptionhandler_globalexceptionhandler_handledisabled",
+      "exception_globalexceptionhandler_globalexceptionhandler_handleillegalarg",
+      "exception_globalexceptionhandler_globalexceptionhandler_handleillegalstate",
+      "exception_globalexceptionhandler_globalexceptionhandler_handlevalidation",
+      "exceptionhandler",
+      "illegalargumentexception",
+      "illegalstateexception",
+      "map",
+      "methodargumentnotvalidexception",
+      "object",
+      "src_main_java_com_oi_app_organoindia_exception_globalexceptionhandler_java_responseentity",
+      "src_main_java_com_oi_app_organoindia_exception_globalexceptionhandler_java_string"
+    ],
+    "10": [
+      "auth_register",
+      "auth_register_register",
+      "auth_register_schema",
+      "controller_authcontroller",
+      "controller_authcontroller_authcontroller_login",
+      "controller_authcontroller_authcontroller_logout",
+      "controller_authcontroller_authcontroller_refresh",
+      "dto_authresponse",
+      "dto_loginrequest",
+      "dto_refreshrequest",
+      "dto_registerrequest",
+      "postmapping",
+      "src_main_java_com_oi_app_organoindia_controller_authcontroller_java_responseentity",
+      "void"
+    ],
+    "11": [
+      "applicationarguments",
+      "applicationrunner",
+      "config_datainitializer",
+      "config_datainitializer_datainitializer_run",
+      "organoindia_organoindiaapplication",
+      "organoindia_organoindiaapplication_organoindiaapplication_main",
+      "src_main_java_com_oi_app_organoindia_config_datainitializer_java_override",
+      "src_main_java_com_oi_app_organoindia_organoindiaapplication_java_string",
+      "test"
+    ],
+    "12": [
+      "vscode_settings",
+      "vscode_settings_editor_linkedediting",
+      "vscode_settings_java_compile_nullanalysis_mode",
+      "vscode_settings_java_configuration_runtimes",
+      "vscode_settings_java_configuration_updatebuildconfiguration",
+      "vscode_settings_java_import_gradle_enabled",
+      "vscode_settings_java_import_gradle_home",
+      "vscode_settings_java_import_gradle_java_home",
+      "vscode_settings_java_jdt_ls_java_home"
+    ],
+    "13": [
+      "long",
+      "preauthorize",
+      "service_productservice",
+      "service_productservice_productservice",
+      "service_productservice_productservice_deleteproduct"
+    ],
+    "14": [
+      "model_product",
+      "model_product_product"
+    ],
+    "15": [
+      "model_user",
+      "model_user_user"
+    ],
+    "16": [
+      "build"
+    ],
+    "17": [
+      "controller_spaforwardcontroller"
+    ],
+    "18": [
+      "model_role"
+    ],
+    "19": [
+      "settings"
+    ],
+    "20": [
+      "ui_eslint_config"
+    ],
+    "21": [
+      "ui_vite_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.08858858858858859,
+    "1": 0.11861861861861862,
+    "2": 0.05405405405405406,
+    "3": 0.13846153846153847,
+    "4": 0.08,
+    "5": 0.1422924901185771,
+    "6": 0.1422924901185771,
+    "7": 0.19473684210526315,
+    "8": 0.20588235294117646,
+    "9": 0.3416666666666667,
+    "10": 0.3076923076923077,
+    "11": 0.2777777777777778,
+    "12": 0.2222222222222222,
+    "13": 0.5,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0
+  },
+  "gods": [
+    {
+      "id": "store_authstore_useauthstore",
+      "label": "useAuthStore",
+      "degree": 18
+    },
+    {
+      "id": "src_app_checkout",
+      "label": "Checkout",
+      "degree": 14
+    },
+    {
+      "id": "utils_formatters_formatcurrency",
+      "label": "formatCurrency()",
+      "degree": 14
+    },
+    {
+      "id": "src_app_productlisting",
+      "label": "ProductListing",
+      "degree": 13
+    },
+    {
+      "id": "src_app_productdetail",
+      "label": "ProductDetail",
+      "degree": 12
+    },
+    {
+      "id": "hooks_usecart_usecart",
+      "label": "useCart()",
+      "degree": 12
+    },
+    {
+      "id": "utils_constants_cities",
+      "label": "CITIES",
+      "degree": 9
+    },
+    {
+      "id": "map",
+      "label": "Map",
+      "degree": 8
+    },
+    {
+      "id": "src_main_java_com_oi_app_organoindia_exception_globalexceptionhandler_java_responseentity",
+      "label": "ResponseEntity",
+      "degree": 6
+    },
+    {
+      "id": "exceptionhandler",
+      "label": "ExceptionHandler",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "AuthBootstrap()",
+      "target": "useAuthStore",
+      "source_files": [
+        "ui/src/App.jsx",
+        "ui/src/store/authStore.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities; peripheral node `AuthBootstrap()` unexpectedly reaches hub `useAuthStore`"
+    },
+    {
+      "source": "CartPage()",
+      "target": "useCart()",
+      "source_files": [
+        "ui/src/features/cart/CartPage.jsx",
+        "ui/src/hooks/useCart.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities; peripheral node `CartPage()` unexpectedly reaches hub `useCart()`"
+    },
+    {
+      "source": "Checkout()",
+      "target": "useCart()",
+      "source_files": [
+        "ui/src/features/checkout/Checkout.jsx",
+        "ui/src/hooks/useCart.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities; peripheral node `Checkout()` unexpectedly reaches hub `useCart()`"
+    },
+    {
+      "source": "CartSummary()",
+      "target": "formatCurrency()",
+      "source_files": [
+        "ui/src/components/cart/CartSummary.jsx",
+        "ui/src/utils/formatters.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `CartSummary()` unexpectedly reaches hub `formatCurrency()`"
+    },
+    {
+      "source": "Header()",
+      "target": "useUiStore",
+      "source_files": [
+        "ui/src/components/layout/Header.jsx",
+        "ui/src/store/uiStore.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
