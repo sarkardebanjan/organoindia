@@ -1,19 +1,21 @@
 package com.oi.app.organoindia.security;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
@@ -51,6 +53,7 @@ public class JwtUtil {
                 .getSubject();
     }
 
+    @SuppressWarnings("unchecked")
     public List<GrantedAuthority> extractRoles(String token) {
         List<String> roles = Jwts.parser()
                 .verifyWith(key())
